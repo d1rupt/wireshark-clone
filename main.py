@@ -11,7 +11,22 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         #TODO: лена и соня - здесь кодьте главное окно
+        self.setWindowTitle("Пример меню")
+        self.setGeometry(100, 100, 300, 200)
+        self.showContextMenu()
+        button_layout = QHBoxLayout()
+        # self.stacklayout = QStackedLayout()
 
+    def showContextMenu(self):
+        menu = QMenu(self)  # это созд меню
+        layout = QHBoxLayout()  # с этим мы будем соединять для горзнт
+        click_1 = QAction("New capture", self)  # QAction - действие, которое можно do
+        click_2 = QAction("Visualisation", self)
+        menu.addAction(click_1)  # с пом-ю адд сы назнач действие. не раб с др
+        menu.addAction(click_2)  # нашем случае мы соедеинели с Menu
+
+        # Показ меню в позиции по центру окна
+        menu.exec(self.mapToGlobal(self.rect().center()))  # ни малейшего поенятия что это но без него не работает
 
     def open_pcap(self, filename):
         pcap2df = pcapHandler(file=filename, verbose=True)
