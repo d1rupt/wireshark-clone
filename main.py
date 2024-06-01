@@ -11,32 +11,39 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         #TODO: лена и соня - здесь кодьте главное окно
-        '''do-QAction действие которое возможно в интерфс.
-         addaction назнач действ через do.add'''
+        self.main_widget = QWidget()
 
-        '''
-        toolbar = QToolBar(self)
-        totoo = QToolBar(self)
-        self.addToolBar(toolbar)
-        self.addToolBar(totoo)
+        self.layout = QGridLayout(self.main_widget)
 
-        butt_action = QAction("Visualisation", self)
-        butt_action_2 = QAction("New capture", self)
-
-        toolbar.addAction(butt_action)
-        totoo.addAction(butt_action_2)
-        '''
-        # это прикольно, но я думала так; с помощью QMenu - я написала это еще в моём рисуночке)
         self.menu = QMenuBar()
-        self.setMenuBar(self.menu) #создаем сверху менюшку
+        self.layout.addWidget(self.menu, 0, 0, 1, 4)
 
-        self.vis = QMenu("Visualisation", self) #добавляем туды кнопочку
+        self.vis = QMenu("Visualisation", self)
         self.menu.addMenu(self.vis)
-        #аналогично добавить New Capture
+        self.capt = QMenu("New capture", self)
+        self.menu.addMenu(self.capt)
 
-    def contextMenuEvent(self,event):
-        event.ignore()
+        # Добавляем виджеты в GridLayout
+        self.layout.addWidget(QLabel("IP"), 1, 0)
+        self.layout.addWidget(QLineEdit(), 1, 1)
+        self.layout.addWidget(QLabel("Port"), 1, 2)
+        self.layout.addWidget(QLineEdit(), 1, 3)
+        self.layout.addWidget(QLabel("Protocol"), 1, 4)
+        self.layout.addWidget(QComboBox(), 1, 5)
+        self.layout.addWidget(QLabel("Time"), 1, 6)
+        self.layout.addWidget(QLineEdit(), 1, 7)
+        self.layout.addWidget(QLabel("Contains"), 2, 0)
+        self.layout.addWidget(QLineEdit(), 2, 1)
+        self.layout.addWidget(QLabel("Size"), 2, 2)
+        self.layout.addWidget(QLineEdit(), 2, 3)
+        self.layout.addWidget(QLabel("Packet type"), 2, 4)
+        self.layout.addWidget(QComboBox(), 2, 5)
+        self.layout.addWidget(QPushButton("Apply"), 2, 6)
+        self.layout.addWidget(QTableWidget(self.main_widget), 4, 1)
 
+        # Устанавливаем созданный виджет в качестве верхнего виджета
+        self.setMenuWidget(self.main_widget)
+        self.setMenuWidget(self.main_widget)
     def open_pcap(self, filename):
         pcap2df = pcapHandler(file=filename, verbose=True)
         df = pcap2df.to_DF(head=True)
