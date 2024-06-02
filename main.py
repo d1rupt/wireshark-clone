@@ -7,9 +7,10 @@ from scapy.utils import rdpcap
 from packet_filter import *
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, sizeHint=None):
         super().__init__()
         #TODO: лена и соня - здесь кодьте главное окно
+        self.setGeometry(500, 400, 800, 300)
         self.main_widget = QWidget()
 
         self.layout = QGridLayout(self.main_widget)
@@ -21,6 +22,8 @@ class MainWindow(QMainWindow):
         self.menu.addMenu(self.vis)
         self.capt = QMenu("New capture", self)
         self.menu.addMenu(self.capt)
+        self.open = QMenu("Open", self)
+        self.menu.addMenu(self.open)
 
         #создаю переменные
         enter_ip = QLineEdit()
