@@ -9,7 +9,6 @@ from packet_filter import *
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-
         #TODO: лена и соня - здесь кодьте главное окно
         self.main_widget = QWidget()
 
@@ -55,11 +54,29 @@ class MainWindow(QMainWindow):
         # Устанавливаем созданный виджет в качестве верхнего виджета
         self.setMenuWidget(self.main_widget)
         self.setMenuWidget(self.main_widget)
+
+        #просто тестирую всякое
+        self.df, self.s_df = open_pcap("./pcaps/capture_2024-06-02_14-22-46.pcap")
+        self.df_filtered = self.df.copy()
+        self.display_pcap(self.df)
     def open_pcap(self, filename):
         pcap2df = pcapHandler(file=filename, verbose=True)
         df = pcap2df.to_DF(head=True)
         scapy_capture = rdpcap(filename)
+        print(df)
         return df, scapy_capture
+    def display_pcap(self, df):
+        data = df.values.tolist()
+        self.table.setRowCount(len(data))
+        self.table.setColumnCount(len(data[0]))
+        self.table.setHorizontalHeaderLabels(df.columns)
+        for i in range(len(data)):
+            for j in range(len(data[0])):
+                self.table.setItem(i,j, QTableWidgetItem(str(data[i][j])))
+    def apply_filters(self, df, filters):
+        self.df_filtered = filter(df, filters)
+        self.display_pcap(self.df_filtered)
+
 
 if __name__ == "__main__":
     app = QApplication([])

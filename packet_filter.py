@@ -10,4 +10,5 @@ def open_pcap(filename):
     scapy_packets = rdpcap(filename)
     return df, scapy_packets
 def filter(filters, df):
+    #return COPY
     pass

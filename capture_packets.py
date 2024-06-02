@@ -1,5 +1,5 @@
 import datetime
-
+from pathlib import Path
 from scapy.all import sniff
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
@@ -11,14 +11,15 @@ class PacketCaptureWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.capturing = False
+
         self.layout = QVBoxLayout()
         self.container = QWidget()
         self.container.setLayout(self.layout)
         self.setCentralWidget(self.container)
 
+
         self.button = QPushButton("Begin capture")
         self.button.clicked.connect(self.capture_packets)
-
         self.layout.addWidget(self.button)
 
     def capture_packets(self):
@@ -32,6 +33,8 @@ class PacketCaptureWindow(QMainWindow):
                 QApplication.processEvents()
             #print(len(captured_packets))
             #save into file
+            Path("./pcaps").mkdir(parents=True, exist_ok=True)
+
             filename = f"./pcaps/capture_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pcap"
             wrpcap(filename, captured_packets)
 
