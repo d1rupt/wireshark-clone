@@ -21,15 +21,20 @@ class PacketCaptureWindow(QMainWindow):
         self.button = QPushButton("Begin capture")
         self.button.clicked.connect(self.capture_packets)
         self.layout.addWidget(self.button)
+        self.cap_data = QLabel()
+        self.layout.addWidget(self.cap_data)
+        self.save_data = QLabel()
+        self.layout.addWidget(self.save_data)
 
     def capture_packets(self):
         if self.capturing == False:
-            self.button.setText("Stop & save capture")
+            self.button.setText("Stop and save capture")
             self.capturing = True
             captured_packets = []
             while self.capturing:
                 packet = sniff(prn = self.process_packet, count = 1)
                 captured_packets.append(packet)
+                self.cap_data.setText(f"Captured packets: {len(captured_packets)}")
                 QApplication.processEvents()
             #print(len(captured_packets))
             #save into file
@@ -37,6 +42,8 @@ class PacketCaptureWindow(QMainWindow):
 
             filename = f"./pcaps/capture_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pcap"
             wrpcap(filename, captured_packets)
+            self.save_data.setText(f"Saved file: {filename}")
+
 
 
         else:

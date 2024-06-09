@@ -5,6 +5,7 @@ import pandas as pd
 from pcap_handler import *
 from scapy.utils import rdpcap
 from packet_filter import *
+from capture_packets import PacketCaptureWindow
 
 class MainWindow(QMainWindow):
     def __init__(self, sizeHint=None):
@@ -18,12 +19,15 @@ class MainWindow(QMainWindow):
         self.menu = QMenuBar()
         self.layout.addWidget(self.menu, 0, 0, 1, 4)
 
-        self.vis = QMenu("Visualisation", self)
-        self.menu.addMenu(self.vis)
-        self.capt = QMenu("New capture", self)
-        self.menu.addMenu(self.capt)
-        self.open = QMenu("Open", self)
-        self.menu.addMenu(self.open)
+        self.vis = QAction("Visualisation", self)
+        self.menu.addAction(self.vis)
+
+        self.capt = QAction("New capture", self)
+        self.menu.addAction(self.capt)
+        self.capt.triggered.connect(self.open_capture)
+
+        self.open = QAction("Open", self)
+        self.menu.addAction(self.open)
 
         #создаю переменные
         enter_ip = QLineEdit()
@@ -79,6 +83,12 @@ class MainWindow(QMainWindow):
     def apply_filters(self, df, filters):
         self.df_filtered = filter(df, filters)
         self.display_pcap(self.df_filtered)
+
+    def open_capture(self):
+        print("opening")
+        self.capture_cam = PacketCaptureWindow()
+        self.capture_cam.show()
+
 
 
 if __name__ == "__main__":
