@@ -6,6 +6,7 @@ from pcap_handler import *
 from scapy.utils import rdpcap
 from packet_filter import *
 from capture_packets import PacketCaptureWindow
+from pathlib import Path
 
 class MainWindow(QMainWindow):
     def __init__(self, sizeHint=None):
@@ -28,6 +29,7 @@ class MainWindow(QMainWindow):
 
         self.open = QAction("Open", self)
         self.menu.addAction(self.open)
+        self.open.triggered.connect(self.file_dialog)
 
         #создаю переменные
         enter_ip = QLineEdit()
@@ -66,6 +68,17 @@ class MainWindow(QMainWindow):
         self.df, self.s_df = open_pcap("./pcaps/capture_2024-06-02_14-22-46.pcap")
         self.df_filtered = self.df.copy()
         self.display_pcap(self.df)
+
+    def file_dialog(self):
+        filename, ok = QFileDialog.getOpenFileName(self,
+                                                   "Select a File:",
+                                                   "C:\\Users",
+                                                   "Pcap files (*.pcap)"
+                                                   )
+        if filename:
+            path = Path(filename)
+
+
     def open_pcap(self, filename):
         pcap2df = pcapHandler(file=filename, verbose=True)
         df = pcap2df.to_DF(head=True)
