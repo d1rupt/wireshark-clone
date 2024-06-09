@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
 
     def file_dialog(self):
         filename, ok = QFileDialog.getOpenFileName(self,
-                                                   "Select a File:",
+                                                   "Select a Pcap File:",
                                                    "C:\\Users",
                                                    "Pcap files (*.pcap)"
                                                    )
