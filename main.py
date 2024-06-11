@@ -1,13 +1,19 @@
+import binascii
+import json
+import time
+
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 import pandas as pd
 from pcap_handler import *
-from scapy.utils import rdpcap
+from scapy.all import rdpcap, Packet, Raw
+from scapy.layers.inet import IP, TCP, UDP
+
 from packet_filter import *
 from capture_packets import PacketCaptureWindow
 from pathlib import Path
-
+from read_pcap import open_pcap
 class MainWindow(QMainWindow):
     def __init__(self, sizeHint=None):
         super().__init__()
@@ -65,9 +71,9 @@ class MainWindow(QMainWindow):
         self.setMenuWidget(self.main_widget)
 
         #просто тестирую всякое
-        self.df, self.s_df = open_pcap("./pcaps/capture_2024-06-02_14-22-46.pcap")
-        self.df_filtered = self.df.copy()
-        self.display_pcap(self.df)
+        #self.df, self.s_df = open_pcap("./pcaps/capture_2024-06-02_14-22-46.pcap")
+        #self.df_filtered = self.df.copy()
+        #self.display_pcap(self.df)
 
     def file_dialog(self):
         filename, ok = QFileDialog.getOpenFileName(self,
@@ -76,15 +82,11 @@ class MainWindow(QMainWindow):
                                                    "Pcap files (*.pcap)"
                                                    )
         if filename:
+            self.df = open_pcap(filename)
+            self.display_pcap(self.df)
             path = Path(filename)
 
 
-    def open_pcap(self, filename):
-        pcap2df = pcapHandler(file=filename, verbose=True)
-        df = pcap2df.to_DF(head=True)
-        scapy_capture = rdpcap(filename)
-        print(df)
-        return df, scapy_capture
     def display_pcap(self, df):
         data = df.values.tolist()
         self.table.setRowCount(len(data))
