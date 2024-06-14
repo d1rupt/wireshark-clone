@@ -6,7 +6,7 @@ import pandas as pd
 from scapy.layers.inet import IP, TCP, UDP
 from scapy.utils import rdpcap
 
-
+#читает в датафрейм
 def open_pcap(filename):
     packets = rdpcap(filename)
     data = []

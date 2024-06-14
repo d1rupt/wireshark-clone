@@ -71,11 +71,6 @@ class MainWindow(QMainWindow):
         # Устанавливаем созданный виджет в качестве верхнего виджета
         self.setCentralWidget(self.main_widget)
 
-        #просто тестирую всякое
-        #self.df, self.s_df = open_pcap("./pcaps/capture_2024-06-02_14-22-46.pcap")
-        #self.df_filtered = self.df.copy()
-        #self.display_pcap(self.df)
-
     def file_dialog(self):
         filename, ok = QFileDialog.getOpenFileName(self,
                                                    "Select a Pcap File:",
