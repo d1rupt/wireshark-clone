@@ -66,9 +66,13 @@ class MainWindow(QMainWindow):
 
         self.table = QTableWidget(self.main_widget)
         self.table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+        # растяжка для столбцов и вообще всего
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
         self.layout.addWidget(self.table, 3, 0, 30, 8)
 
-        # Устанавливаем созданный виджет в качестве верхнего виджета
+        # Устанавливаем созданный виджет в качестве центрального виджета
         self.setCentralWidget(self.main_widget)
 
     def file_dialog(self):
