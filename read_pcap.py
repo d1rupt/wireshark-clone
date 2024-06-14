@@ -41,7 +41,6 @@ def open_pcap(filename):
         field_vals.append(binascii.hexlify(packet[layer_type].payload.original))
         payload = packet[layer_type].payload.original
         payload = [chr(x) for x in payload if (x in range(32, 126) or x == 10 or x == 13)]
-        print(payload)
         payload = ''.join(payload)
         field_vals.append(payload)
         # Add row to DF
