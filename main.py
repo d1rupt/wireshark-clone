@@ -1,19 +1,13 @@
-import binascii
-import json
-import time
-
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 import pandas as pd
 from pcap_handler import *
-from scapy.all import rdpcap, Packet, Raw
-from scapy.layers.inet import IP, TCP, UDP
-
+from scapy.utils import rdpcap
 from packet_filter import *
 from capture_packets import PacketCaptureWindow
 from pathlib import Path
-from read_pcap import open_pcap
+
 class MainWindow(QMainWindow):
     def __init__(self, sizeHint=None):
         super().__init__()
@@ -38,30 +32,30 @@ class MainWindow(QMainWindow):
         self.open.triggered.connect(self.file_dialog)
 
         #создаю переменные
-        enter_src_ip = QLineEdit()
-        enter_dest_ip = QLineEdit()
-        enter_src_port = QLineEdit()
-        enter_dest_port = QLineEdit()
+        enter_ip = QLineEdit()
+        enter_port = QLineEdit()
+        enter_time = QLineEdit()
         enter_contains = QLineEdit()
         enter_size = QLineEdit()
 
         choose_protocol = QComboBox()
+        choose_packet_type = QComboBox()
 
         # Добавляем виджеты в GridLayout
-        self.layout.addWidget(QLabel("source IP"), 1, 0)
-        self.layout.addWidget(enter_src_ip, 1, 1)
-        self.layout.addWidget(QLabel("destination IP"), 1, 2)
-        self.layout.addWidget(enter_dest_ip, 1, 3)
-        self.layout.addWidget(QLabel("source Port"), 1, 4)
-        self.layout.addWidget(enter_src_port, 1, 5)
-        self.layout.addWidget(QLabel("destination Port"), 1, 6)
-        self.layout.addWidget(enter_dest_port, 1, 7)
-        self.layout.addWidget(QLabel("Protocol"), 2, 2)
-        self.layout.addWidget(choose_protocol, 2, 3)
-        self.layout.addWidget(QLabel("Contains"), 2, 4)
-        self.layout.addWidget(enter_contains, 2, 5)
-        self.layout.addWidget(QLabel("Size"), 2, 0)
-        self.layout.addWidget(enter_size, 2, 1)
+        self.layout.addWidget(QLabel("IP"), 1, 0)
+        self.layout.addWidget(enter_ip, 1, 1)
+        self.layout.addWidget(QLabel("Port"), 1, 2)
+        self.layout.addWidget(enter_port, 1, 3)
+        self.layout.addWidget(QLabel("Protocol"), 1, 4)
+        self.layout.addWidget(choose_protocol, 1, 5)
+        self.layout.addWidget(QLabel("Time"), 1, 6)
+        self.layout.addWidget(enter_time, 1, 7)
+        self.layout.addWidget(QLabel("Contains"), 2, 0)
+        self.layout.addWidget(enter_contains, 2, 1)
+        self.layout.addWidget(QLabel("Size"), 2, 2)
+        self.layout.addWidget(enter_size, 2, 3)
+        self.layout.addWidget(QLabel("Packet type"), 2, 4)
+        self.layout.addWidget(choose_packet_type, 2, 5)
         self.layout.addWidget(QPushButton("Apply"), 2, 6)
 
         self.table = QTableWidget(self.main_widget)
@@ -72,9 +66,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.main_widget)
 
         #просто тестирую всякое
-        #self.df, self.s_df = open_pcap("./pcaps/capture_2024-06-02_14-22-46.pcap")
-        #self.df_filtered = self.df.copy()
-        #self.display_pcap(self.df)
+        self.df, self.s_df = open_pcap("./pcaps/capture_2024-06-02_14-22-46.pcap")
+        self.df_filtered = self.df.copy()
+        self.display_pcap(self.df)
 
     def file_dialog(self):
         filename, ok = QFileDialog.getOpenFileName(self,
@@ -83,11 +77,15 @@ class MainWindow(QMainWindow):
                                                    "Pcap files (*.pcap)"
                                                    )
         if filename:
-            self.df = open_pcap(filename)
-            self.display_pcap(self.df)
             path = Path(filename)
 
 
+    def open_pcap(self, filename):
+        pcap2df = pcapHandler(file=filename, verbose=True)
+        df = pcap2df.to_DF(head=True)
+        scapy_capture = rdpcap(filename)
+        print(df)
+        return df, scapy_capture
     def display_pcap(self, df):
         data = df.values.tolist()
         self.table.setRowCount(len(data))
