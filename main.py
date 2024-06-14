@@ -12,13 +12,13 @@ class MainWindow(QMainWindow):
     def __init__(self, sizeHint=None):
         super().__init__()
         #TODO: лена и соня - здесь кодьте главное окно
-        self.setGeometry(500, 400, 800, 600)
+        self.setGeometry(500, 400, 800, 300)
         self.main_widget = QWidget()
 
         self.layout = QGridLayout(self.main_widget)
 
         self.menu = QMenuBar()
-        self.layout.addWidget(self.menu, 0, 0, 1, 8)
+        self.layout.addWidget(self.menu, 0, 0, 1, 4)
 
         self.vis = QAction("Visualisation", self)
         self.menu.addAction(self.vis)
@@ -57,13 +57,12 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(QLabel("Packet type"), 2, 4)
         self.layout.addWidget(choose_packet_type, 2, 5)
         self.layout.addWidget(QPushButton("Apply"), 2, 6)
-
         self.table = QTableWidget(self.main_widget)
-        self.table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.layout.addWidget(self.table, 3, 0, 30, 8)
+        self.layout.addWidget(self.table, 3, 0, 8, 8)
 
         # Устанавливаем созданный виджет в качестве верхнего виджета
-        self.setCentralWidget(self.main_widget)
+        self.setMenuWidget(self.main_widget)
+        self.setMenuWidget(self.main_widget)
 
         #просто тестирую всякое
         self.df, self.s_df = open_pcap("./pcaps/capture_2024-06-02_14-22-46.pcap")
