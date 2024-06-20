@@ -1,8 +1,17 @@
 from scapy.utils import rdpcap
 from pcap_handler import *
 #TODO? other filters?
-filters = {"ip_src": None, "ip_dest":None, "port_src": None, "port_dest":None, "protocol": None, "contains": None, "size": None,}
+filters = {"src": None, "dst":None,"sport": None,"dport": None, "proto": None,"len": None, "contains": None,}
 
 def filter(filters, df):
+    print(filters)
     #return COPY
-    pass
+    for col in list(filters.keys())[:-1]:
+        if filters[col]:
+            df = df[df[col] == filters[col]]
+
+    if filters['contains']:
+        df = df[df['payload_strings'].str.contains(filters['contains'])]
+
+    print(df)
+    return df

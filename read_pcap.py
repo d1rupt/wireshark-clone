@@ -9,10 +9,8 @@ from scapy.utils import rdpcap
 #читает в датафрейм
 def open_pcap(filename):
     packets = rdpcap(filename)
-    data = []
     ip_fields = [field.name for field in IP().fields_desc]
     tcp_fields = [field.name for field in TCP().fields_desc]
-    udp_fields = [field.name for field in UDP().fields_desc]
     dataframe_fields = ip_fields + ['time'] + tcp_fields + ['payload', 'payload_raw', 'payload_hex', 'payload_strings']
     df = pd.DataFrame(columns=dataframe_fields)
     with open("./data/ip-protocol-numbers.json", 'r') as f:

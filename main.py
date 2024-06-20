@@ -17,7 +17,6 @@ from read_pcap import open_pcap
 class MainWindow(QMainWindow):
     def __init__(self, sizeHint=None):
         super().__init__()
-        #TODO: лена и соня - здесь кодьте главное окно
         self.setGeometry(500, 400, 800, 600)
         self.main_widget = QWidget()
 
@@ -38,31 +37,32 @@ class MainWindow(QMainWindow):
         self.open.triggered.connect(self.file_dialog)
 
         #создаю переменные
-        enter_src_ip = QLineEdit()
-        enter_dest_ip = QLineEdit()
-        enter_src_port = QLineEdit()
-        enter_dest_port = QLineEdit()
-        enter_contains = QLineEdit()
-        enter_size = QLineEdit()
+        self.enter_src_ip = QLineEdit()
+        self.enter_dest_ip = QLineEdit()
+        self.enter_src_port = QLineEdit()
+        self.enter_dest_port = QLineEdit()
+        self.enter_contains = QLineEdit()
+        self.enter_size = QLineEdit()
 
-        choose_protocol = QComboBox()
-
+        self.choose_protocol = QComboBox()
+        button = QPushButton("Apply")
+        button.clicked.connect(self.apply_filters)
         # Добавляем виджеты в GridLayout
         self.layout.addWidget(QLabel("source IP"), 1, 0)
-        self.layout.addWidget(enter_src_ip, 1, 1)
+        self.layout.addWidget(self.enter_src_ip, 1, 1)
         self.layout.addWidget(QLabel("destination IP"), 1, 2)
-        self.layout.addWidget(enter_dest_ip, 1, 3)
+        self.layout.addWidget(self.enter_dest_ip, 1, 3)
         self.layout.addWidget(QLabel("source Port"), 1, 4)
-        self.layout.addWidget(enter_src_port, 1, 5)
+        self.layout.addWidget(self.enter_src_port, 1, 5)
         self.layout.addWidget(QLabel("destination Port"), 1, 6)
-        self.layout.addWidget(enter_dest_port, 1, 7)
+        self.layout.addWidget(self.enter_dest_port, 1, 7)
         self.layout.addWidget(QLabel("Protocol"), 2, 2)
-        self.layout.addWidget(choose_protocol, 2, 3)
+        self.layout.addWidget(self.choose_protocol, 2, 3)
         self.layout.addWidget(QLabel("Contains"), 2, 4)
-        self.layout.addWidget(enter_contains, 2, 5)
+        self.layout.addWidget(self.enter_contains, 2, 5)
         self.layout.addWidget(QLabel("Size"), 2, 0)
-        self.layout.addWidget(enter_size, 2, 1)
-        self.layout.addWidget(QPushButton("Apply"), 2, 6)
+        self.layout.addWidget(self.enter_size, 2, 1)
+        self.layout.addWidget(button, 2, 6)
 
         self.table = QTableWidget(self.main_widget)
         self.table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -83,20 +83,44 @@ class MainWindow(QMainWindow):
                                                    )
         if filename:
             self.df = open_pcap(filename)
+            self.list_protocols(self.df)
             self.display_pcap(self.df)
             path = Path(filename)
 
+    def list_protocols(self, df):
+        proto = df["proto"].unique()
+        self.choose_protocol.clear()
+        self.choose_protocol.addItem("")
+        self.choose_protocol.addItems(proto)
 
     def display_pcap(self, df):
         data = df.values.tolist()
-        self.table.setRowCount(len(data))
-        self.table.setColumnCount(len(data[0]))
-        self.table.setHorizontalHeaderLabels(df.columns)
-        for i in range(len(data)):
-            for j in range(len(data[0])):
-                self.table.setItem(i,j, QTableWidgetItem(str(data[i][j])))
-    def apply_filters(self, df, filters):
-        self.df_filtered = filter(df, filters)
+        try:
+            self.table.setRowCount(len(data))
+            self.table.setColumnCount(len(data[0]))
+            self.table.setHorizontalHeaderLabels(df.columns)
+            for i in range(len(data)):
+                for j in range(len(data[0])):
+                    self.table.setItem(i,j, QTableWidgetItem(str(data[i][j])))
+        except:
+            print("Empty")
+    def apply_filters(self):
+
+        filters["src"] = self.enter_src_ip.text()
+        filters["dst"] = self.enter_dest_ip.text()
+        try:
+            filters['sport'] = int(self.enter_src_port.text())
+        except: filters['sport'] = None
+        try:
+            filters['dport'] = int(self.enter_dest_port.text())
+        except: filters['dport'] = None
+        try:
+            filters['len'] = int(self.enter_size.text())
+        except: filters['len'] = None
+        filters['contains'] = self.enter_contains.text()
+        filters['proto'] = self.choose_protocol.currentText()
+
+        self.df_filtered = filter(filters, self.df)
         self.display_pcap(self.df_filtered)
 
     def open_capture(self):
