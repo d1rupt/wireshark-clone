@@ -1,15 +1,6 @@
-import binascii
-import json
-import time
-
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
-from PyQt6.QtCore import *
-import pandas as pd
-from pcap_handler import *
-from scapy.all import rdpcap, Packet, Raw
-from scapy.layers.inet import IP, TCP, UDP
-
+from packet_graph import *
 from packet_filter import *
 from capture_packets import PacketCaptureWindow
 from pathlib import Path
@@ -25,8 +16,12 @@ class MainWindow(QMainWindow):
         self.menu = QMenuBar()
         self.layout.addWidget(self.menu, 0, 0, 1, 8)
 
-        self.vis = QAction("Visualisation", self)
-        self.menu.addAction(self.vis)
+        self.vis = QMenu("Visualisation", self)
+        self.menu.addMenu(self.vis)
+        vis1 = self.vis.addAction("Packet length distrubution")
+        vis1.triggered.connect(lambda x: plot_packet_length_distribution(self.df))
+        vis2 = self.vis.addAction("Traffic over time")
+        vis2.triggered.connect(lambda x: plot_traffic_over_time(self.df))
 
         self.capt = QAction("New capture", self)
         self.menu.addAction(self.capt)

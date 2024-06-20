@@ -1,8 +1,6 @@
 import datetime
 from pathlib import Path
 from scapy.all import sniff
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 from scapy.utils import wrpcap
 
