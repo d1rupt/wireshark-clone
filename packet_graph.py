@@ -14,10 +14,8 @@ def plot_packet_length_distribution(df):
 
 def plot_traffic_over_time(df):
     plt.figure(figsize=(10, 6))
-    #df['time'] = df['time'].astype(float)
     pattern = '%d/%m/%y, %I:%M:%S %p'
     df['time'] = df['time'].apply(lambda x : int(time.mktime(time.strptime(x, pattern))))
-    #print(df['time'])
     plt.plot(pd.to_datetime(df['time'], unit='s'), df['len'], color='red')
     plt.title('Трафик с течением времени')
     plt.xlabel('Время')
@@ -25,6 +23,31 @@ def plot_traffic_over_time(df):
     plt.grid(True)
     plt.show()
 
+def plot_addresses_sending_payloads(df):
+    plt.figure(figsize=(15, 8))
+    payload_by_src = df.groupby('src')['payload'].sum()
+    payload_by_src = payload_by_src.sort_values(ascending=False)
+    plt.bar(payload_by_src.index, payload_by_src.values, color='yellow', alpha=0.7)
+    plt.title('Адреса, по которым отправляется полезная нагрузка')
+    plt.xlabel('Исходный IP-адрес')
+    plt.ylabel('Полезная нагрузка')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.grid(True)
+    plt.show()
+
+def plot_destination_addresses(df):
+    plt.figure(figsize=(15, 8))
+    payload_by_dst = df.groupby('dst')['payload'].sum()
+    payload_by_dst = payload_by_dst.sort_values(ascending=False)
+    plt.bar(payload_by_dst.index, payload_by_dst.values, color='brown', alpha=0.7)
+    plt.title('Целевые адреса')
+    plt.xlabel('Целевой IP-адрес')
+    plt.ylabel('Полезная нагрузка')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.grid(True)
+    plt.show()
 
 
 if __name__ == "__main__":
@@ -33,3 +56,5 @@ if __name__ == "__main__":
 
     plot_packet_length_distribution(df)
     plot_traffic_over_time(df)
+    plot_addresses_sending_payloads(df)
+    plot_destination_addresses(df)

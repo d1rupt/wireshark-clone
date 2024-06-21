@@ -22,6 +22,10 @@ class MainWindow(QMainWindow):
         vis1.triggered.connect(lambda x: plot_packet_length_distribution(self.df))
         vis2 = self.vis.addAction("Traffic over time")
         vis2.triggered.connect(lambda x: plot_traffic_over_time(self.df))
+        vis3 = self.vis.addAction("Addresses sending payloads")
+        vis3.triggered.connect(lambda x: plot_addresses_sending_payloads(self.df))
+        vis4 = self.vis.addAction("Destination addresses")
+        vis4.triggered.connect(lambda x: plot_destination_addresses(self.df))
 
         self.capt = QAction("New capture", self)
         self.menu.addAction(self.capt)
